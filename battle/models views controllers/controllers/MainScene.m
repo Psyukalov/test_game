@@ -22,6 +22,8 @@
 
 #define NO_MOVE_ZONE_USER_DATA_KEY   (@"no_move_zone_user_data_key")
 #define PLAYER_USER_DATA_KEY         (@"player_user_data_key")
+#define ITEM_USER_DATA_KEY           (@"item_user_data_key")
+#define ITEM_VALUE_USER_DATA_KEY     (@"item_value_user_data_key")
 
 #define PLAYER_A_SPRITE_NODE         (@"player_a_sprite_node")
 #define PLAYER_B_SPRITE_NODE         (@"player_b_sprite_node")
@@ -82,11 +84,21 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     self.zoomLevel = _zoomLevel + 1;
 }
 
+- (void)nextZoomLevel {
+    NSUInteger zoomLevel = _zoomLevel;
+    zoomLevel++;
+    if (zoomLevel > MAX_ZOOM_LEVEL) {
+        zoomLevel = MIN_ZOOM_LEVEL;
+    }
+    self.zoomLevel = zoomLevel;
+}
+
 - (void)toggleCameraToPlayer:(MSPlayer)player {
     [self toggleCameraToPlayer:player animated:YES];
 }
 
 - (void)toggleCameraToPlayer:(MSPlayer)player animated:(BOOL)animated {
+    [self removeGridCellSpriteNodes];
     SKSpriteNode *spriteNode = [self playerSpriteNodeWithPlayer:player];
     SKRange      *xRange     = [SKRange rangeWithLowerLimit:-FREE_X * GRID_SIZE upperLimit:FREE_X * GRID_SIZE];
     SKRange      *yRange     = [SKRange rangeWithLowerLimit:-FREE_Y * GRID_SIZE upperLimit:FREE_Y * GRID_SIZE];
@@ -95,6 +107,11 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     _cameraNode.constraints  = nil;
     [_cameraNode runAction:[SKAction moveTo:spriteNode.position duration:animated ? CAMERA_DURATION : 0.0f] completion:^{
         self->_cameraNode.constraints = @[constraint];
+        if (animated) {
+            if ([(id)self.delegate respondsToSelector:@selector(didToggleCameraCompleteWithMainScene:)]) {
+                [(id)self.delegate didToggleCameraCompleteWithMainScene:self];
+            }
+        }
     }];
 }
 
@@ -103,9 +120,20 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     SKSpriteNode *node      = [self playerSpriteNodeWithPlayer:player];
     CGVector      vector    = [self vectorWithDirection:direction];
     CGPoint       nextPoint = [self nextPointWithPoint:node.position vector:vector];
-    BOOL          canMove   = MSCellStatusCanMove([self cellStatusWithPoint:nextPoint]);
-    if (canMove && !node.hasActions) {
-        [node runAction:[SKAction moveTo:nextPoint duration:MOVE_DURATION]];
+    BOOL          canMove   = MSCellStatusCanMove([self cellStatusWithPoint:nextPoint]) && !node.hasActions;
+    if (canMove) {
+        SKSpriteNode *spriteNode;
+        NSUInteger    value = 0;
+        MSItem        item  = [self itemWithPoint:nextPoint withSpriteNode:&spriteNode andValue:&value];
+        [node runAction:[SKAction moveTo:nextPoint duration:MOVE_DURATION] completion:^{
+            if (item != MSItemNone) {
+                [spriteNode removeFromParent];
+#warning
+                if ([(id)self.delegate respondsToSelector:@selector(mainScene:didPickUpItem:withValue:)]) {
+                    [(id)self.delegate mainScene:self didPickUpItem:item withValue:value];
+                }
+            }
+        }];
     }
     return canMove;
 }
@@ -202,7 +230,7 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
 }
 
 - (void)setZoomLevel:(NSUInteger)zoomLevel animated:(BOOL)animated {
-    if (zoomLevel >= MIN_ZOOM_LEVEL && zoomLevel <= MAX_ZOOM_LEVEL) {
+    if (zoomLevel >= MIN_ZOOM_LEVEL && zoomLevel <= MAX_ZOOM_LEVEL && !_cameraNode.hasActions) {
         _zoomLevel = zoomLevel;
         [_cameraNode runAction:[SKAction scaleTo:(CGFloat)_zoomLevel duration:animated ? ZOOM_DURATION : 0.0f]];
     }
@@ -230,6 +258,18 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
         }
     }
     return MSCellStatusEmpty;
+}
+
+- (MSItem)itemWithPoint:(CGPoint)point withSpriteNode:(SKSpriteNode **)spriteNode andValue:(NSUInteger *)value {
+    for (SKNode *node in [self nodesAtPoint:point]) {
+        MSItem item = [node.userData[ITEM_USER_DATA_KEY] integerValue];
+        if (item != MSItemNone) {
+            *spriteNode = (SKSpriteNode *)node;
+            *value      = [node.userData[ITEM_VALUE_USER_DATA_KEY] integerValue];
+            return item;
+        }
+    }
+    return MSItemNone;
 }
 
 - (CGVector)vectorWithDirection:(MSDirection)direction {

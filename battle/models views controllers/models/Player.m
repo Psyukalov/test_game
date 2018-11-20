@@ -115,11 +115,11 @@
 #pragma mark - Public methods
 
 - (void)resetHealthPoints {
-    _healthPoints = self.maxMovePoints;
+    _healthPoints = [@(self.maxHealthPoints) integerValue];
 }
 
 - (void)resetMovePoints {
-    _movePoints = self.maxMovePoints;
+    _movePoints = [@(self.maxMovePoints) integerValue];
 }
 
 - (void)resetAttacks {
@@ -155,20 +155,32 @@
 
 - (void)addDamage:(NSUInteger)damage {
     _healthPoints -= damage;
-    if (_healthPoints <= 0) {
+    if (_healthPoints < 0) {
         _healthPoints = 0;
+    }
+    if ([_delegate respondsToSelector:@selector(didReceiveDamageWithPlayer:)]) {
+        [_delegate didReceiveDamageWithPlayer:self];
+    }
+    if (_healthPoints == 0) {
         if ([_delegate respondsToSelector:@selector(didEndHealthPointsWithPlayer:)]) {
             [_delegate didEndHealthPointsWithPlayer:self];
-        }
-    } else {
-        if ([_delegate respondsToSelector:@selector(didReceiveDamageWithPlayer:)]) {
-            [_delegate didReceiveDamageWithPlayer:self];
         }
     }
 }
 
+- (void)addHealthPoints:(NSUInteger)healthPoints {
+    _healthPoints += healthPoints;
+    NSUInteger maxHealthPoints = self.maxHealthPoints;
+    if (_healthPoints > maxHealthPoints) {
+        _healthPoints = maxHealthPoints;
+    }
+    if ([_delegate respondsToSelector:@selector(didReceiveHealthPointsWithPlayer:)]) {
+        [_delegate didReceiveHealthPointsWithPlayer:self];
+    }
+}
+
 - (BOOL)makeMove {
-    if (_movePoints > 0) {
+    if (self.canMakeMove) {
         _movePoints--;
         if (_movePoints == 0) {
             if ([_delegate respondsToSelector:@selector(didEndMovePointsWithPlayer:)]) {
@@ -181,7 +193,22 @@
     return NO;
 }
 
+- (void)addMovePoints:(NSUInteger)movePoints {
+    _movePoints += movePoints;
+    NSUInteger maxMovePoints = self.maxMovePoints;
+    if (_movePoints > maxMovePoints) {
+        _movePoints = maxMovePoints;
+    }
+    if ([_delegate respondsToSelector:@selector(didReceiveMovePointsWithPlayer:)]) {
+        [_delegate didReceiveMovePointsWithPlayer:self];
+    }
+}
+
 #pragma mark - Public properties
+
+- (BOOL)canMakeMove {
+    return _movePoints > 0;
+}
 
 - (NSUInteger)maxHealthPoints {
     NSInteger valueE = _parameters.E + [_card effectValueWithType:EffectTypeE];

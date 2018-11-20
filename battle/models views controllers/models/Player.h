@@ -42,6 +42,10 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 
 - (void)didReceiveDamageWithPlayer:(Player *)player;
 
+- (void)didReceiveHealthPointsWithPlayer:(Player *)player;
+
+- (void)didReceiveMovePointsWithPlayer:(Player *)player;
+
 - (void)didEndMovePointsWithPlayer:(Player *)player;
 
 - (void)didEndAttacksWithPlayer:(Player *)player;
@@ -55,6 +59,7 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 
 @property (weak, nonatomic) id<PlayerDelegate> delegate;
 
+@property (assign, nonatomic) BOOL canMakeMove;
 @property (assign, nonatomic) BOOL canMakeAttackSword;
 @property (assign, nonatomic) BOOL canMakeAttackBow;
 
@@ -94,6 +99,10 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 
 - (void)addDamage:(NSUInteger)damage;
 
+- (void)addHealthPoints:(NSUInteger)healthPoints;
+
 - (BOOL)makeMove;
+
+- (void)addMovePoints:(NSUInteger)movePoints;
 
 @end

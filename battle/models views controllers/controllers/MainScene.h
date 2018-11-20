@@ -34,12 +34,35 @@ typedef NS_ENUM(NSUInteger, MSAttackType) {
 };
 
 
+typedef NS_ENUM(NSUInteger, MSItem) {
+    MSItemNone = 0,
+    MSItemHealthPoints,
+    MSItemMovePoints
+};
+
+
+@class MainScene;
+
+
+@protocol MainSceneDelegate <SKSceneDelegate>
+
+@optional
+
+- (void)mainScene:(MainScene *)scene didPickUpItem:(MSItem)item withValue:(NSUInteger)value;
+
+- (void)didToggleCameraCompleteWithMainScene:(MainScene *)scene;
+
+@end
+
+
 @interface MainScene : SKScene
 
 @property (assign, nonatomic) NSUInteger zoomLevel;
 
 - (void)zoomIn;
 - (void)zoomOut;
+
+- (void)nextZoomLevel;
 
 - (void)toggleCameraToPlayer:(MSPlayer)player;
 

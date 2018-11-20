@@ -16,15 +16,4 @@
 
 - (instancetype)initWithPlayerA:(Player *)playerA andPlayerB:(Player *)playerB;
 
-- (void)movePlayerUp;
-- (void)movePlayerRight;
-- (void)movePlayerDown;
-- (void)movePlayerLeft;
-
-- (void)drawGridCellsWithSword;
-- (void)drawGridCellsWithBow;
-
-- (void)attackPlayerWithSword;
-- (void)attackPlayerWithBow;
-
 @end

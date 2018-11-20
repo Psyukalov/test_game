@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C76F4F4721A2EA10008DFC99 /* GamePadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C76F4F4621A2EA10008DFC99 /* GamePadViewController.m */; };
+		C76F4F4921A2ED9D008DFC99 /* GamePadView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C76F4F4821A2ED9D008DFC99 /* GamePadView.xib */; };
 		C7729F06219C3CFC00669E63 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F05219C3CFC00669E63 /* AppDelegate.m */; };
 		C7729F0E219C3D0300669E63 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7729F0D219C3D0300669E63 /* Assets.xcassets */; };
 		C7729F14219C3D0300669E63 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F13219C3D0300669E63 /* main.m */; };
@@ -22,9 +24,14 @@
 		C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE35219DAD58000BE8D2 /* PressStart2P-Regular.ttf */; };
 		C7ADCE38219DADD4000BE8D2 /* GameView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE37219DADD4000BE8D2 /* GameView.xib */; };
 		C7ADCE3A219DAEEC000BE8D2 /* MainScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE39219DAEEC000BE8D2 /* MainScene.sks */; };
+		C7D89A2C21A442540003BB4B /* ToggleView.m in Sources */ = {isa = PBXBuildFile; fileRef = C7D89A2B21A442540003BB4B /* ToggleView.m */; };
+		C7D89A2F21A448540003BB4B /* GameMenuToggleView.m in Sources */ = {isa = PBXBuildFile; fileRef = C7D89A2E21A448540003BB4B /* GameMenuToggleView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C76F4F4521A2EA10008DFC99 /* GamePadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GamePadViewController.h; sourceTree = "<group>"; };
+		C76F4F4621A2EA10008DFC99 /* GamePadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GamePadViewController.m; sourceTree = "<group>"; };
+		C76F4F4821A2ED9D008DFC99 /* GamePadView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GamePadView.xib; sourceTree = "<group>"; };
 		C7729F01219C3CFC00669E63 /* battle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = battle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7729F04219C3CFC00669E63 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		C7729F05219C3CFC00669E63 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -50,6 +57,10 @@
 		C7ADCE35219DAD58000BE8D2 /* PressStart2P-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PressStart2P-Regular.ttf"; sourceTree = "<group>"; };
 		C7ADCE37219DADD4000BE8D2 /* GameView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GameView.xib; sourceTree = "<group>"; };
 		C7ADCE39219DAEEC000BE8D2 /* MainScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainScene.sks; sourceTree = "<group>"; };
+		C7D89A2A21A442540003BB4B /* ToggleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ToggleView.h; sourceTree = "<group>"; };
+		C7D89A2B21A442540003BB4B /* ToggleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ToggleView.m; sourceTree = "<group>"; };
+		C7D89A2D21A448540003BB4B /* GameMenuToggleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameMenuToggleView.h; sourceTree = "<group>"; };
+		C7D89A2E21A448540003BB4B /* GameMenuToggleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameMenuToggleView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,10 +117,16 @@
 		C7729F1B219C737700669E63 /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				C7D89A2D21A448540003BB4B /* GameMenuToggleView.h */,
+				C7D89A2E21A448540003BB4B /* GameMenuToggleView.m */,
+				C76F4F4521A2EA10008DFC99 /* GamePadViewController.h */,
+				C76F4F4621A2EA10008DFC99 /* GamePadViewController.m */,
 				C7729F22219C784E00669E63 /* GameViewController.h */,
 				C7729F21219C784E00669E63 /* GameViewController.m */,
 				C7729F33219C78F500669E63 /* MainScene.h */,
 				C7729F34219C78F500669E63 /* MainScene.m */,
+				C7D89A2A21A442540003BB4B /* ToggleView.h */,
+				C7D89A2B21A442540003BB4B /* ToggleView.m */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -134,6 +151,7 @@
 		C7729F1D219C737700669E63 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				C76F4F4821A2ED9D008DFC99 /* GamePadView.xib */,
 				C7ADCE37219DADD4000BE8D2 /* GameView.xib */,
 				C7ADCE39219DAEEC000BE8D2 /* MainScene.sks */,
 			);
@@ -224,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */,
+				C76F4F4921A2ED9D008DFC99 /* GamePadView.xib in Resources */,
 				C7ADCE38219DADD4000BE8D2 /* GameView.xib in Resources */,
 				C7729F0E219C3D0300669E63 /* Assets.xcassets in Resources */,
 				C7ADCE31219DA48B000BE8D2 /* tile_set.sks in Resources */,
@@ -241,13 +260,16 @@
 			files = (
 				C7729F26219C785800669E63 /* Player.m in Sources */,
 				C7729F14219C3D0300669E63 /* main.m in Sources */,
+				C76F4F4721A2EA10008DFC99 /* GamePadViewController.m in Sources */,
 				C7729F2F219C787900669E63 /* Effect.m in Sources */,
 				C7729F32219C788100669E63 /* Timer.m in Sources */,
 				C7729F23219C784E00669E63 /* GameViewController.m in Sources */,
 				C7729F35219C78F600669E63 /* MainScene.m in Sources */,
 				C7729F2B219C787100669E63 /* CardsManager.m in Sources */,
 				C7729F06219C3CFC00669E63 /* AppDelegate.m in Sources */,
+				C7D89A2C21A442540003BB4B /* ToggleView.m in Sources */,
 				C7729F2C219C787100669E63 /* Card.m in Sources */,
+				C7D89A2F21A448540003BB4B /* GameMenuToggleView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
