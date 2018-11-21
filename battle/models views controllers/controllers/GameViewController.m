@@ -21,7 +21,7 @@
 #define TURN_TIME  (60)
 
 #define SCENE_NAME              (@"MainScene")
-#define DEFAULT_CARD_IDENTIFIER (@"")
+#define DEFAULT_CARD_IDENTIFIER (@"card_01")
 
 
 typedef NS_ENUM(NSUInteger, GVCTurnPlayer) {
@@ -118,7 +118,7 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
         _playerA = [[Player alloc] initWithParametrs:parameters andCard:card];
     }
     if (!_playerB) {
-        _playerB = [[Player alloc] initWithParametrs:parameters andCard:card];
+        _playerB = [[Player alloc] initWithParametrs:parameters andCard:nil];
     }
     _turn               = GVCTurnPlayerA;
     _attackTypePlayerA  = MSAttackTypeSword;

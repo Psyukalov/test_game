@@ -21,7 +21,9 @@ typedef NS_ENUM(NSUInteger, EffectType) {
     EffectTypeSwordRange,
     EffectTypeBowRange,
     EffectTypeSwordDamage,
-    EffectTypeBowDamage
+    EffectTypeBowDamage,
+    EffectTypeSwordCountAttack,
+    EffectTypeBowCountAttack,
 };
 
 

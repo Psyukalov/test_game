@@ -9,6 +9,9 @@
 
 #import "GamePadViewController.h"
 
+#import <AudioToolbox/AudioToolbox.h>
+
+
 #define MIN_ZONE_RATIO (0.3f)
 #define MAX_ZONE_RATIO (0.7f)
 
@@ -17,6 +20,9 @@
 #define DIRECTION_RIGHT_IMAGE_NAME   (@"directions_right_button")
 #define DIRECTION_DOWN_IMAGE_NAME    (@"directions_down_button")
 #define DIRECTION_LEFT_IMAGE_NAME    (@"directions_left_button")
+
+#define SOUND_NAME (@"press_sound")
+#define SOUND_TYPE (@"aif")
 
 
 typedef NS_ENUM(NSUInteger, GPVCDirection) {
@@ -40,6 +46,8 @@ typedef NS_ENUM(NSUInteger, GPVCDirection) {
 @property (strong, nonatomic) NSArray<UIImage *> *directionsImages;
 
 @property (assign, nonatomic) GPVCDirection direction;
+
+@property (assign, nonatomic) SystemSoundID pressSoundID;
 
 @end
 
@@ -75,17 +83,22 @@ typedef NS_ENUM(NSUInteger, GPVCDirection) {
     UILongPressGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handlerGestureRecognizer:)];
     gestureRecognizer.minimumPressDuration = 0.f;
     [_directionsImageView addGestureRecognizer:gestureRecognizer];
+    NSString *path = [[NSBundle mainBundle] pathForResource:SOUND_NAME ofType:SOUND_TYPE];
+    NSURL    *URL  = [NSURL fileURLWithPath:path];
+    AudioServicesCreateSystemSoundID(CFBridgingRetain(URL), &(_pressSoundID));
 }
 
 #pragma mark - Private methods
 
 - (void)didPressActionButton:(GPVCActionButton)actionButton {
+    AudioServicesPlaySystemSound(_pressSoundID);
     if ([_delegate respondsToSelector:@selector(gamePadViewController:didPressActionButton:)]) {
         [_delegate gamePadViewController:self didPressActionButton:actionButton];
     }
 }
 
 - (void)didPressDirectionButton:(GPVCDirectionButton)directionButton {
+    AudioServicesPlaySystemSound(_pressSoundID);
     if ([_delegate respondsToSelector:@selector(gamePadViewController:didPressDirectionButton:)]) {
         [_delegate gamePadViewController:self didPressDirectionButton:directionButton];
     }
@@ -189,12 +202,14 @@ typedef NS_ENUM(NSUInteger, GPVCDirection) {
 }
 
 - (IBAction)menuButton_TUI:(UIButton *)sender {
+    AudioServicesPlaySystemSound(_pressSoundID);
     if ([_delegate respondsToSelector:@selector(didPressMenuWithGamePadViewController:)]) {
         [_delegate didPressMenuWithGamePadViewController:self];
     }
 }
 
 - (IBAction)infoButton_TUI:(UIButton *)sender {
+    AudioServicesPlaySystemSound(_pressSoundID);
     if ([_delegate respondsToSelector:@selector(didPressInfoWithGamePadViewController:)]) {
         [_delegate didPressInfoWithGamePadViewController:self];
     }

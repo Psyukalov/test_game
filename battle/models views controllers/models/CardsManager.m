@@ -37,6 +37,9 @@
 
 - (void)setup {
     _cards = nil;
+    Card *card_01 = [[Card alloc] initWithIdentifier:@"card_01" andEffects:@[[[Effect alloc] initWithType:EffectTypeHealthPoints andValue:-50],
+                                                                             [[Effect alloc] initWithType:EffectTypeBowCountAttack andValue:2]]];
+    _cards = @[card_01];
 }
 
 #pragma mark - Public methods

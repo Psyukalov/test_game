@@ -19,6 +19,7 @@
 		C7729F2F219C787900669E63 /* Effect.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F2E219C787900669E63 /* Effect.m */; };
 		C7729F32219C788100669E63 /* Timer.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F31219C788100669E63 /* Timer.m */; };
 		C7729F35219C78F600669E63 /* MainScene.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F34219C78F500669E63 /* MainScene.m */; };
+		C79618DA21A573280055C557 /* press_sound.aif in Resources */ = {isa = PBXBuildFile; fileRef = C79618D921A573280055C557 /* press_sound.aif */; };
 		C7ADCE08219D8DB5000BE8D2 /* Resources.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE07219D8DB5000BE8D2 /* Resources.xcassets */; };
 		C7ADCE31219DA48B000BE8D2 /* tile_set.sks in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE30219DA48B000BE8D2 /* tile_set.sks */; };
 		C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE35219DAD58000BE8D2 /* PressStart2P-Regular.ttf */; };
@@ -52,6 +53,7 @@
 		C7729F31219C788100669E63 /* Timer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Timer.m; sourceTree = "<group>"; };
 		C7729F33219C78F500669E63 /* MainScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainScene.h; sourceTree = "<group>"; };
 		C7729F34219C78F500669E63 /* MainScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainScene.m; sourceTree = "<group>"; };
+		C79618D921A573280055C557 /* press_sound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = press_sound.aif; sourceTree = "<group>"; };
 		C7ADCE07219D8DB5000BE8D2 /* Resources.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources.xcassets; sourceTree = "<group>"; };
 		C7ADCE30219DA48B000BE8D2 /* tile_set.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = tile_set.sks; sourceTree = "<group>"; };
 		C7ADCE35219DAD58000BE8D2 /* PressStart2P-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PressStart2P-Regular.ttf"; sourceTree = "<group>"; };
@@ -158,11 +160,20 @@
 			path = views;
 			sourceTree = "<group>";
 		};
+		C79618D021A570F70055C557 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				C79618D921A573280055C557 /* press_sound.aif */,
+			);
+			path = sounds;
+			sourceTree = "<group>";
+		};
 		C7ADCE06219D8D9D000BE8D2 /* resources */ = {
 			isa = PBXGroup;
 			children = (
 				C7ADCE34219DAD58000BE8D2 /* fonts */,
 				C7ADCE07219D8DB5000BE8D2 /* Resources.xcassets */,
+				C79618D021A570F70055C557 /* sounds */,
 				C7ADCE2B219DA417000BE8D2 /* tile sets */,
 			);
 			path = resources;
@@ -241,13 +252,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */,
+				C7729F0E219C3D0300669E63 /* Assets.xcassets in Resources */,
 				C76F4F4921A2ED9D008DFC99 /* GamePadView.xib in Resources */,
 				C7ADCE38219DADD4000BE8D2 /* GameView.xib in Resources */,
-				C7729F0E219C3D0300669E63 /* Assets.xcassets in Resources */,
-				C7ADCE31219DA48B000BE8D2 /* tile_set.sks in Resources */,
-				C7ADCE08219D8DB5000BE8D2 /* Resources.xcassets in Resources */,
 				C7ADCE3A219DAEEC000BE8D2 /* MainScene.sks in Resources */,
+				C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */,
+				C7ADCE08219D8DB5000BE8D2 /* Resources.xcassets in Resources */,
+				C79618DA21A573280055C557 /* press_sound.aif in Resources */,
+				C7ADCE31219DA48B000BE8D2 /* tile_set.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,18 +270,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7729F26219C785800669E63 /* Player.m in Sources */,
+				C7729F06219C3CFC00669E63 /* AppDelegate.m in Sources */,
 				C7729F14219C3D0300669E63 /* main.m in Sources */,
+				C7D89A2F21A448540003BB4B /* GameMenuToggleView.m in Sources */,
 				C76F4F4721A2EA10008DFC99 /* GamePadViewController.m in Sources */,
-				C7729F2F219C787900669E63 /* Effect.m in Sources */,
-				C7729F32219C788100669E63 /* Timer.m in Sources */,
 				C7729F23219C784E00669E63 /* GameViewController.m in Sources */,
 				C7729F35219C78F600669E63 /* MainScene.m in Sources */,
-				C7729F2B219C787100669E63 /* CardsManager.m in Sources */,
-				C7729F06219C3CFC00669E63 /* AppDelegate.m in Sources */,
 				C7D89A2C21A442540003BB4B /* ToggleView.m in Sources */,
 				C7729F2C219C787100669E63 /* Card.m in Sources */,
-				C7D89A2F21A448540003BB4B /* GameMenuToggleView.m in Sources */,
+				C7729F2B219C787100669E63 /* CardsManager.m in Sources */,
+				C7729F2F219C787900669E63 /* Effect.m in Sources */,
+				C7729F26219C785800669E63 /* Player.m in Sources */,
+				C7729F32219C788100669E63 /* Timer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

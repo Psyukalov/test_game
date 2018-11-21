@@ -131,8 +131,8 @@
 }
 
 - (void)resetAttacks {
-    _countAttackSword = BASE_COUNT_ATTACK_SWORD;
-    _countAttackBow   = BASE_COUNT_ATTACK_BOW;
+    _countAttackSword = BASE_COUNT_ATTACK_SWORD + [_card effectValueWithType:EffectTypeSwordCountAttack];
+    _countAttackBow   = BASE_COUNT_ATTACK_BOW + [_card effectValueWithType:EffectTypeBowCountAttack];
 }
 
 - (void)reset {
