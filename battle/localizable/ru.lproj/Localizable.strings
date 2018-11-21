@@ -1,0 +1,23 @@
+/* 
+ Localizable.strings
+ battle
+ 
+ Created by Vladimir Psyukalov on 21.11.2018.
+ Copyright © 2018 Rubeum Macula. All rights reserved.
+ */
+
+"locale" = "ru";
+
+// GameViewController
+
+"gvc_l_player_a" = "Игрок А";
+"gvc_l_player_b" = "Игрок Б";
+
+"gvc_l_continue" = "Продолжить";
+"gvc_l_exit_a" = "Выход";
+
+"gvc_l_turn" = "Ходит";
+
+"gvc_l_game_end" = "Игра окончена!\n\nПобедитель";
+"gvc_l_play_again" = "Играть ещё раз";
+"gvc_l_exit_b" = "Выход";

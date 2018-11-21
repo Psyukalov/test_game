@@ -31,7 +31,7 @@
                     <state key="normal" image="c_default_button"/>
                     <state key="highlighted" image="c_highlighted_button"/>
                     <connections>
-                        <action selector="cButton_TUI:" destination="-1" eventType="touchUpInside" id="EgI-2B-04y"/>
+                        <action selector="cButton_TD:" destination="-1" eventType="touchUpInside" id="L2p-Fm-3GJ"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VRa-8I-co9">
@@ -43,7 +43,7 @@
                     <state key="normal" image="d_default_button"/>
                     <state key="highlighted" image="d_highlighted_button"/>
                     <connections>
-                        <action selector="dButton_TUI:" destination="-1" eventType="touchUpInside" id="Pi1-dn-Cgf"/>
+                        <action selector="dButton_TD:" destination="-1" eventType="touchUpInside" id="zXr-mA-GuF"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MS3-Qd-YuD">
@@ -52,7 +52,7 @@
                     <state key="normal" image="a_default_button"/>
                     <state key="highlighted" image="a_highlighted_button"/>
                     <connections>
-                        <action selector="aButton_TUI:" destination="-1" eventType="touchUpInside" id="rwK-Be-qC9"/>
+                        <action selector="aButton_TD:" destination="-1" eventType="touchUpInside" id="NgJ-y8-rJa"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jlu-F1-ASX">
@@ -61,7 +61,7 @@
                     <state key="normal" image="b_default_button"/>
                     <state key="highlighted" image="b_highlighted_button"/>
                     <connections>
-                        <action selector="bButton_TUI:" destination="-1" eventType="touchUpInside" id="LZk-5S-bo1"/>
+                        <action selector="bButton_TD:" destination="-1" eventType="touchUpInside" id="YRB-Qk-uHU"/>
                     </connections>
                 </button>
                 <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="directions_default_button" translatesAutoresizingMaskIntoConstraints="NO" id="8TV-hI-G7a">
@@ -82,7 +82,7 @@
                             <state key="normal" image="menu_default_button"/>
                             <state key="highlighted" image="menu_highlighted_button"/>
                             <connections>
-                                <action selector="menuButton_TUI:" destination="-1" eventType="touchUpInside" id="IkX-Ya-vY3"/>
+                                <action selector="menuButton_TD:" destination="-1" eventType="touchUpInside" id="YW5-Ge-HTI"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pkp-O1-y7N">
@@ -91,7 +91,7 @@
                             <state key="normal" image="info_default_button"/>
                             <state key="highlighted" image="info_highlighted_button"/>
                             <connections>
-                                <action selector="infoButton_TUI:" destination="-1" eventType="touchUpInside" id="XXZ-lI-dij"/>
+                                <action selector="infoButton_TD:" destination="-1" eventType="touchUpInside" id="lXR-of-FZo"/>
                             </connections>
                         </button>
                     </subviews>

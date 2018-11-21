@@ -80,5 +80,6 @@ typedef NS_ENUM(NSUInteger, MSItem) {
 - (void)attackPlayer:(MSPlayer)attackedPlayer withAttackType:(MSAttackType)attackType andDamage:(NSUInteger)damage asCritical:(BOOL)critical;
 
 - (void)deathWithPlayer:(MSPlayer)player;
+- (void)deathWithPlayer:(MSPlayer)player completion:(void (^)(void))completion;
 
 @end

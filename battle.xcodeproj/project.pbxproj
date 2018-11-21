@@ -20,6 +20,8 @@
 		C7729F32219C788100669E63 /* Timer.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F31219C788100669E63 /* Timer.m */; };
 		C7729F35219C78F600669E63 /* MainScene.m in Sources */ = {isa = PBXBuildFile; fileRef = C7729F34219C78F500669E63 /* MainScene.m */; };
 		C79618DA21A573280055C557 /* press_sound.aif in Resources */ = {isa = PBXBuildFile; fileRef = C79618D921A573280055C557 /* press_sound.aif */; };
+		C79618E221A57B9A0055C557 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C79618E421A57B9A0055C557 /* Localizable.strings */; };
+		C79618EB21A57D9B0055C557 /* UIView+Localizable.m in Sources */ = {isa = PBXBuildFile; fileRef = C79618EA21A57C960055C557 /* UIView+Localizable.m */; };
 		C7ADCE08219D8DB5000BE8D2 /* Resources.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE07219D8DB5000BE8D2 /* Resources.xcassets */; };
 		C7ADCE31219DA48B000BE8D2 /* tile_set.sks in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE30219DA48B000BE8D2 /* tile_set.sks */; };
 		C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7ADCE35219DAD58000BE8D2 /* PressStart2P-Regular.ttf */; };
@@ -54,6 +56,12 @@
 		C7729F33219C78F500669E63 /* MainScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainScene.h; sourceTree = "<group>"; };
 		C7729F34219C78F500669E63 /* MainScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainScene.m; sourceTree = "<group>"; };
 		C79618D921A573280055C557 /* press_sound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = press_sound.aif; sourceTree = "<group>"; };
+		C79618DD21A579E60055C557 /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
+		C79618DE21A579E60055C557 /* Macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Macros.h; sourceTree = "<group>"; };
+		C79618E321A57B9A0055C557 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C79618E521A57BA40055C557 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C79618E921A57C960055C557 /* UIView+Localizable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Localizable.h"; sourceTree = "<group>"; };
+		C79618EA21A57C960055C557 /* UIView+Localizable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Localizable.m"; sourceTree = "<group>"; };
 		C7ADCE07219D8DB5000BE8D2 /* Resources.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources.xcassets; sourceTree = "<group>"; };
 		C7ADCE30219DA48B000BE8D2 /* tile_set.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = tile_set.sks; sourceTree = "<group>"; };
 		C7ADCE35219DAD58000BE8D2 /* PressStart2P-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PressStart2P-Regular.ttf"; sourceTree = "<group>"; };
@@ -99,9 +107,11 @@
 				C7729F05219C3CFC00669E63 /* AppDelegate.m */,
 				C7729F0D219C3D0300669E63 /* Assets.xcassets */,
 				C7729F12219C3D0300669E63 /* Info.plist */,
+				C79618DF21A57B650055C557 /* localizable */,
 				C7729F13219C3D0300669E63 /* main.m */,
 				C7729F1A219C737700669E63 /* models views controllers */,
 				C7ADCE06219D8D9D000BE8D2 /* resources */,
+				C79618DB21A579E60055C557 /* utils */,
 			);
 			path = battle;
 			sourceTree = "<group>";
@@ -166,6 +176,41 @@
 				C79618D921A573280055C557 /* press_sound.aif */,
 			);
 			path = sounds;
+			sourceTree = "<group>";
+		};
+		C79618DB21A579E60055C557 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				C79618E621A57C960055C557 /* categories */,
+				C79618DC21A579E60055C557 /* macroses */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		C79618DC21A579E60055C557 /* macroses */ = {
+			isa = PBXGroup;
+			children = (
+				C79618DD21A579E60055C557 /* Colors.h */,
+				C79618DE21A579E60055C557 /* Macros.h */,
+			);
+			path = macroses;
+			sourceTree = "<group>";
+		};
+		C79618DF21A57B650055C557 /* localizable */ = {
+			isa = PBXGroup;
+			children = (
+				C79618E421A57B9A0055C557 /* Localizable.strings */,
+			);
+			path = localizable;
+			sourceTree = "<group>";
+		};
+		C79618E621A57C960055C557 /* categories */ = {
+			isa = PBXGroup;
+			children = (
+				C79618E921A57C960055C557 /* UIView+Localizable.h */,
+				C79618EA21A57C960055C557 /* UIView+Localizable.m */,
+			);
+			path = categories;
 			sourceTree = "<group>";
 		};
 		C7ADCE06219D8D9D000BE8D2 /* resources */ = {
@@ -235,7 +280,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
+				ru,
 			);
 			mainGroup = C7729EF8219C3CFC00669E63;
 			productRefGroup = C7729F02219C3CFC00669E63 /* Products */;
@@ -256,6 +301,7 @@
 				C76F4F4921A2ED9D008DFC99 /* GamePadView.xib in Resources */,
 				C7ADCE38219DADD4000BE8D2 /* GameView.xib in Resources */,
 				C7ADCE3A219DAEEC000BE8D2 /* MainScene.sks in Resources */,
+				C79618E221A57B9A0055C557 /* Localizable.strings in Resources */,
 				C7ADCE36219DAD58000BE8D2 /* PressStart2P-Regular.ttf in Resources */,
 				C7ADCE08219D8DB5000BE8D2 /* Resources.xcassets in Resources */,
 				C79618DA21A573280055C557 /* press_sound.aif in Resources */,
@@ -272,6 +318,7 @@
 			files = (
 				C7729F06219C3CFC00669E63 /* AppDelegate.m in Sources */,
 				C7729F14219C3D0300669E63 /* main.m in Sources */,
+				C79618EB21A57D9B0055C557 /* UIView+Localizable.m in Sources */,
 				C7D89A2F21A448540003BB4B /* GameMenuToggleView.m in Sources */,
 				C76F4F4721A2EA10008DFC99 /* GamePadViewController.m in Sources */,
 				C7729F23219C784E00669E63 /* GameViewController.m in Sources */,
@@ -287,11 +334,24 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		C79618E421A57B9A0055C557 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C79618E321A57B9A0055C557 /* en */,
+				C79618E521A57BA40055C557 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		C7729F15219C3D0300669E63 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -351,6 +411,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

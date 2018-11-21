@@ -185,30 +185,30 @@ typedef NS_ENUM(NSUInteger, GPVCDirection) {
 
 #pragma mark - Actions
 
-- (IBAction)aButton_TUI:(UIButton *)sender {
+- (IBAction)aButton_TD:(UIButton *)sender {
     [self didPressActionButton:GPVCActionButtonA];
 }
 
-- (IBAction)bButton_TUI:(UIButton *)sender {
+- (IBAction)bButton_TD:(UIButton *)sender {
     [self didPressActionButton:GPVCActionButtonB];
 }
 
-- (IBAction)cButton_TUI:(UIButton *)sender {
+- (IBAction)cButton_TD:(UIButton *)sender {
     [self didPressActionButton:GPVCActionButtonC];
 }
 
-- (IBAction)dButton_TUI:(UIButton *)sender {
+- (IBAction)dButton_TD:(UIButton *)sender {
     [self didPressActionButton:GPVCActionButtonD];
 }
 
-- (IBAction)menuButton_TUI:(UIButton *)sender {
+- (IBAction)menuButton_TD:(UIButton *)sender {
     AudioServicesPlaySystemSound(_pressSoundID);
     if ([_delegate respondsToSelector:@selector(didPressMenuWithGamePadViewController:)]) {
         [_delegate didPressMenuWithGamePadViewController:self];
     }
 }
 
-- (IBAction)infoButton_TUI:(UIButton *)sender {
+- (IBAction)infoButton_TD:(UIButton *)sender {
     AudioServicesPlaySystemSound(_pressSoundID);
     if ([_delegate respondsToSelector:@selector(didPressInfoWithGamePadViewController:)]) {
         [_delegate didPressInfoWithGamePadViewController:self];

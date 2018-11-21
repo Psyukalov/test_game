@@ -9,6 +9,10 @@
 
 #import "GameViewController.h"
 
+#import "Macros.h"
+
+#import "UIView+Localizable.h"
+
 #import "Timer.h"
 
 #import "MainScene.h"
@@ -20,8 +24,7 @@
 
 #define TURN_TIME  (60)
 
-#define SCENE_NAME              (@"MainScene")
-#define DEFAULT_CARD_IDENTIFIER (@"card_01")
+#define SCENE_NAME (@"MainScene")
 
 
 typedef NS_ENUM(NSUInteger, GVCTurnPlayer) {
@@ -41,6 +44,8 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 @interface GameViewController () <PlayerDelegate, TimerDelegate, GamePadViewControllerDelegate, MainSceneDelegate, ToggleViewDelegate>
 
 @property (weak, nonatomic) IBOutlet SKView *sceneView;
+
+@property (weak, nonatomic) IBOutlet UIView *headerView;
 
 @property (weak, nonatomic) IBOutlet UILabel *healthPointsPlayerALabel;
 @property (weak, nonatomic) IBOutlet UILabel *healthPointsPlayerBLabel;
@@ -65,8 +70,19 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 @property (weak, nonatomic) IBOutlet GameMenuToggleView *gameMenuToggleView;
 
+@property (weak, nonatomic) IBOutlet UIView *turnView;
+
+@property (weak, nonatomic) IBOutlet ToggleView *endGameToggleView;
+
 @property (weak, nonatomic) IBOutlet UILabel *continueLabel;
-@property (weak, nonatomic) IBOutlet UILabel *exitLabel;
+@property (weak, nonatomic) IBOutlet UILabel *exitLabelA;
+
+@property (weak, nonatomic) IBOutlet UILabel *turnLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *endGameLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *playAgainLabel;
+@property (weak, nonatomic) IBOutlet UILabel *exitLabelB;
 
 @property (assign, nonatomic) GVCTurnPlayer turn;
 
@@ -112,15 +128,14 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    Parameters  parameters = ParametersMake(5, 5, 5, 5);
-    Card       *card       = [[CardsManager shared] cardWithIdentifier:DEFAULT_CARD_IDENTIFIER];
+    Parameters parameters = ParametersMake(5, 5, 5, 5);
     if (!_playerA) {
-        _playerA = [[Player alloc] initWithParametrs:parameters andCard:card];
+        _playerA = [[Player alloc] initWithParametrs:parameters andCard:nil];
     }
     if (!_playerB) {
         _playerB = [[Player alloc] initWithParametrs:parameters andCard:nil];
     }
-    _turn               = GVCTurnPlayerA;
+    _turn               = (GVCTurnPlayer)arc4random_uniform(2);
     _attackTypePlayerA  = MSAttackTypeSword;
     _attackTypePlayerB  = MSAttackTypeSword;
     _mainScene          = [MainScene nodeWithFileNamed:SCENE_NAME];
@@ -140,12 +155,21 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     _gamePadViewController.delegate   = self;
     _gamePadViewController.parentView = _gamePadViewContainer;
     [_gameMenuToggleView addItemLabel:_continueLabel];
-    [_gameMenuToggleView addItemLabel:_exitLabel];
+    [_gameMenuToggleView addItemLabel:_exitLabelA];
+    [_endGameToggleView addItemLabel:_playAgainLabel];
+    [_endGameToggleView addItemLabel:_exitLabelB];
     _gameMenuToggleView.delegate         = self;
+    _endGameToggleView.delegate          = self;
     _gameMenuToggleView.currentItemIndex = 0;
+    _endGameToggleView.currentItemIndex  = 0;
     _gameMenuToggleView.hidden           = YES;
-    [self.view layoutIfNeeded];
+    _endGameToggleView.hidden            = YES;
+    [_turnView localizable];
+    [_headerView localizable];
+    [_gameMenuToggleView localizable];
+    [_endGameToggleView localizable];
     [self updateUI];
+    [self.view layoutIfNeeded];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -182,6 +206,8 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     BOOL condition          = GVCTurnIsPlayerA(_turn);
     _arrowAImageView.hidden = !condition;
     _arrowBImageView.hidden =  condition;
+    NSString *key           =  GVCTurnIsPlayerA(_turn) ? @"gvc_l_player_a" : @"gvc_l_player_b";
+    _turnLabel.text         =  [NSString stringWithFormat:@"%@ %@", LOCALIZE(@"gvc_l_turn"), LOCALIZE(key)];
 }
 
 - (void)updateTurnTimeUIWithTime:(NSUInteger)time {
@@ -272,9 +298,19 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     _turn = GVCTurnPlayerMakeReverse(_turn);
     _gamePadViewController.on = NO;
     _neededChangeAttackType   = NO;
+    _turnView.hidden          = NO;
     [self updateUI];
     [_mainScene toggleCameraToPlayer:self.currentScenePlayer];
 #warning
+}
+
+- (void)endGame {
+    [_timer stop];
+    [GamePadViewController shared].delegate = _endGameToggleView;
+    _endGameToggleView.currentItemIndex = 0;
+    _endGameToggleView.hidden           = NO;
+    NSString *key      =  _playerA.healthPoints == 0 ? @"gvc_l_player_b" : @"gvc_l_player_a";
+    _endGameLabel.text = [NSString stringWithFormat:@"%@ %@", LOCALIZE(@"gvc_l_game_end"), LOCALIZE(key)];
 }
 
 #pragma mark - Private properties
@@ -303,6 +339,8 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 - (void)didEndHealthPointsWithPlayer:(Player *)player {
     [_mainScene deathWithPlayer:[self scenePlayerWithPlayer:player]];
+#warning
+    [self endGame];
 }
 
 - (void)didReceiveDamageWithPlayer:(Player *)player {
@@ -431,25 +469,43 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 - (void)didToggleCameraCompleteWithMainScene:(MainScene *)scene {
     _gamePadViewController.on = YES;
+    _turnView.hidden          = YES;
     [_timer startCountdownFromTime:TURN_TIME];
 }
 
-#pragma mark -ToggleViewDelegate
+#pragma mark - ToggleViewDelegate
 
 - (void)toggleView:(ToggleView *)view didSelectItemLabelWithIndex:(NSUInteger)index {
-    switch (index) {
-        case 0: {
-            [GamePadViewController shared].delegate = self;
-            _gameMenuToggleView.hidden = YES;
-            [_timer start];
+    if (view == _gameMenuToggleView) {
+        switch (index) {
+            case 0: {
+                [GamePadViewController shared].delegate = self;
+                _gameMenuToggleView.hidden = YES;
+                [_timer start];
+            }
+                break;
+            case 1: {
+                [self.navigationController popToRootViewControllerAnimated:NO];
+            }
+                break;
+            default:
+                break;
         }
-            break;
-        case 1: {
+    } else if (view == _endGameToggleView) {
+        switch (index) {
+            case 0: {
+                [GamePadViewController shared].delegate = self;
+                _endGameToggleView.hidden = YES;
 #warning
+            }
+                break;
+            case 1: {
+                [self.navigationController popToRootViewControllerAnimated:NO];
+            }
+                break;
+            default:
+                break;
         }
-            break;
-        default:
-            break;
     }
 }
 

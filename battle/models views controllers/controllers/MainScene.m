@@ -205,8 +205,15 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
 }
 
 - (void)deathWithPlayer:(MSPlayer)player {
+    [self deathWithPlayer:player completion:nil];
+}
+
+- (void)deathWithPlayer:(MSPlayer)player completion:(void (^)(void))completion {
     [self removeGridCellSpriteNodes];
 #warning
+    if (completion) {
+        completion();
+    }
 }
 
 #pragma mark - Private methods
