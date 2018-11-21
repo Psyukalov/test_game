@@ -54,6 +54,12 @@
     [_itemLabels addObject:itemLabel];
 }
 
+- (void)selectWithCurrentItemIndex {
+    if ([_delegate respondsToSelector:@selector(toggleView:didSelectItemLabelWithIndex:)]) {
+        [_delegate toggleView:self didSelectItemLabelWithIndex:_currentItemIndex];
+    }
+}
+
 #pragma mark - Public properties
 
 - (void)setCurrentItemIndex:(NSUInteger)currentItemIndex {
@@ -75,7 +81,7 @@
         case GPVCDirectionButtonUp: {
             index--;
             if (index < 0) {
-                index = 0;
+                index = _itemLabels.count - 1;
             }
             self.currentItemIndex = index;
         }
@@ -83,7 +89,7 @@
         case GPVCDirectionButtonDown: {
             index++;
             if (index > _itemLabels.count - 1) {
-                index = _itemLabels.count - 1;
+                index = 0;
             }
             self.currentItemIndex = index;
         }
@@ -94,9 +100,7 @@
 }
 
 - (void)gamePadViewController:(GamePadViewController *)viewController didPressActionButton:(GPVCActionButton)actionButton {
-    if ([_delegate respondsToSelector:@selector(toggleView:didSelectItemLabelWithIndex:)]) {
-        [_delegate toggleView:self didSelectItemLabelWithIndex:_currentItemIndex];
-    }
+    [self selectWithCurrentItemIndex];
 }
 
 - (void)didPressMenuWithGamePadViewController:(GamePadViewController *)viewController {

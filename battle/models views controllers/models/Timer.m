@@ -29,24 +29,26 @@
 #pragma mark - Public methods
 
 - (void)start {
-    if (_timer) {
-        [self stop];
-    }
     _timer = [NSTimer scheduledTimerWithTimeInterval:TIME_INTERVAL target:self selector:@selector(updateTime) userInfo:nil repeats:YES];
     [[NSRunLoop currentRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
 }
 
 - (void)startCountdownFromTime:(NSUInteger)time {
+    [self stop];
     _time      = time;
     _countdown = YES;
     [self start];
 }
 
 - (void)stop {
-    [_timer invalidate];
-    _timer     = nil;
+    [self pause];
     _time      = 0;
     _countdown = NO;
+}
+
+- (void)pause {
+    [_timer invalidate];
+    _timer = nil;
 }
 
 #pragma mark - Selector methods

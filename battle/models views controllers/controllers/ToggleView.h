@@ -32,4 +32,6 @@
 
 - (void)addItemLabel:(UILabel *)itemLabel;
 
+- (void)selectWithCurrentItemIndex;
+
 @end

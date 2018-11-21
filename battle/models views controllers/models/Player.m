@@ -10,13 +10,15 @@
 #import "Player.h"
 
 
-#define BASE_HEALTH_POINTS    (100)
-#define BASE_MOVE_POINTS      (10)
-#define BASE_SWORD_DAMAGE     (32)
-#define BASE_BOW_DAMAGE       (8)
-#define BASE_CRITICAL_PERCENT (32)
-#define BASE_SWORD_RANGE      (1)
-#define BASE_BOW_RANGE        (6)
+#define BASE_HEALTH_POINTS      (100)
+#define BASE_MOVE_POINTS        (10)
+#define BASE_SWORD_DAMAGE       (32)
+#define BASE_BOW_DAMAGE         (8)
+#define BASE_CRITICAL_PERCENT   (32)
+#define BASE_SWORD_RANGE        (1)
+#define BASE_BOW_RANGE          (6)
+#define BASE_COUNT_ATTACK_SWORD (1)
+#define BASE_COUNT_ATTACK_BOW   (1)
 
 
 #define S_KEY (@"s")
@@ -97,7 +99,7 @@
 }
 
 - (void)checkEndAttacks {
-    if (!_canMakeAttackSword && !_canMakeAttackBow) {
+    if (!self.canMakeAttackSword && !self.canMakeAttackBow) {
         if ([_delegate respondsToSelector:@selector(didEndAttacksWithPlayer:)]) {
             [_delegate didEndAttacksWithPlayer:self];
         }
@@ -105,10 +107,16 @@
 }
 
 - (void)checkEndTurn {
-    if (_movePoints == 0 && !_canMakeAttackSword && !_canMakeAttackBow) {
+    if (_movePoints == 0 && !self.canMakeAttackSword && !self.canMakeAttackBow) {
         if ([_delegate respondsToSelector:@selector(didEndTurnWithPlayer:)]) {
             [_delegate didEndTurnWithPlayer:self];
         }
+    }
+}
+
+- (void)didReceiveCountsAttack {
+    if ([_delegate respondsToSelector:@selector(didReceiveCountsAttackWithPlayer:)]) {
+        [_delegate didReceiveCountsAttackWithPlayer:self];
     }
 }
 
@@ -123,8 +131,8 @@
 }
 
 - (void)resetAttacks {
-    _canMakeAttackSword = YES;
-    _canMakeAttackBow   = YES;
+    _countAttackSword = BASE_COUNT_ATTACK_SWORD;
+    _countAttackBow   = BASE_COUNT_ATTACK_BOW;
 }
 
 - (void)reset {
@@ -134,7 +142,6 @@
 }
 
 - (NSUInteger)swordDamageAsCrititcal:(BOOL *)critical {
-    _canMakeAttackSword  = NO;
     *critical            = [self criticalDamage];
     NSInteger valueS     = _parameters.S + [_card effectValueWithType:EffectTypeS];
     NSInteger valueE     = _parameters.E + [_card effectValueWithType:EffectTypeE];
@@ -144,7 +151,6 @@
 }
 
 - (NSUInteger)bowDamageAsCrititcal:(BOOL *)critical {
-    _canMakeAttackBow = NO;
     *critical         = [self criticalDamage];
     NSInteger valueS  = _parameters.S + [_card effectValueWithType:EffectTypeS];
     NSInteger valueA  = _parameters.A + [_card effectValueWithType:EffectTypeA];
@@ -204,10 +210,40 @@
     }
 }
 
+- (void)makeAttackSword {
+    if (self.canMakeAttackSword) {
+        _countAttackSword--;
+    }
+}
+
+- (void)makeAttackBow {
+    if (self.canMakeAttackBow) {
+        _countAttackBow--;
+    }
+}
+
+- (void)addCountAttackSword:(NSUInteger)count {
+    _countAttackSword += count;
+    [self didReceiveCountsAttack];
+}
+
+- (void)addCountAttackBow:(NSUInteger)count {
+    _countAttackBow += count;
+    [self didReceiveCountsAttack];
+}
+
 #pragma mark - Public properties
 
 - (BOOL)canMakeMove {
     return _movePoints > 0;
+}
+
+- (BOOL)canMakeAttackSword {
+    return _countAttackSword > 0;
+}
+
+- (BOOL)canMakeAttackBow {
+    return _countAttackBow > 0;
 }
 
 - (NSUInteger)maxHealthPoints {

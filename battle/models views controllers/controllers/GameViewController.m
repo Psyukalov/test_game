@@ -15,6 +15,8 @@
 
 #import "GamePadViewController.h"
 
+#import "GameMenuToggleView.h"
+
 
 #define TURN_TIME  (60)
 
@@ -36,14 +38,7 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 }
 
 
-@interface GameViewController () <PlayerDelegate, TimerDelegate, GamePadViewControllerDelegate, MainSceneDelegate>
-
-{
-    
-    BOOL canAttackWithSword;
-    BOOL canAttackWithBow;
-    
-}
+@interface GameViewController () <PlayerDelegate, TimerDelegate, GamePadViewControllerDelegate, MainSceneDelegate, ToggleViewDelegate>
 
 @property (weak, nonatomic) IBOutlet SKView *sceneView;
 
@@ -54,18 +49,34 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 @property (weak, nonatomic) IBOutlet UILabel *movePointsLabel;
 
+@property (weak, nonatomic) IBOutlet UILabel *swordAttackCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *bowAttackCountLabel;
+
 @property (weak, nonatomic) IBOutlet UIImageView *topLineImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *bottomLineImageView;
 
 @property (weak, nonatomic) IBOutlet UIImageView *arrowAImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *arrowBImageView;
 
+@property (weak, nonatomic) IBOutlet UIImageView *arrowSwordImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *arrowBowImageView;
+
 @property (weak, nonatomic) IBOutlet UIView *gamePadViewContainer;
+
+@property (weak, nonatomic) IBOutlet GameMenuToggleView *gameMenuToggleView;
+
+@property (weak, nonatomic) IBOutlet UILabel *continueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *exitLabel;
 
 @property (assign, nonatomic) GVCTurnPlayer turn;
 
 @property (assign, nonatomic) MSPlayer currentScenePlayer;
 @property (assign, nonatomic) MSPlayer waitingScenePlayer;
+
+@property (assign, nonatomic, readonly) MSAttackType currentAttackType;
+
+@property (assign, nonatomic) MSAttackType attackTypePlayerA;
+@property (assign, nonatomic) MSAttackType attackTypePlayerB;
 
 @property (strong, nonatomic, readonly) Player *playerA;
 @property (strong, nonatomic, readonly) Player *playerB;
@@ -78,6 +89,8 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 @property (strong, nonatomic) MainScene *mainScene;
 
 @property (strong, nonatomic) GamePadViewController *gamePadViewController;
+
+@property (assign, nonatomic) BOOL neededChangeAttackType;
 
 @end
 
@@ -108,6 +121,8 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
         _playerB = [[Player alloc] initWithParametrs:parameters andCard:card];
     }
     _turn               = GVCTurnPlayerA;
+    _attackTypePlayerA  = MSAttackTypeSword;
+    _attackTypePlayerB  = MSAttackTypeSword;
     _mainScene          = [MainScene nodeWithFileNamed:SCENE_NAME];
     _timer              = [Timer new];
     _mainScene.delegate = self;
@@ -124,15 +139,23 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     _gamePadViewController.on         = NO;
     _gamePadViewController.delegate   = self;
     _gamePadViewController.parentView = _gamePadViewContainer;
+    [_gameMenuToggleView addItemLabel:_continueLabel];
+    [_gameMenuToggleView addItemLabel:_exitLabel];
+    _gameMenuToggleView.delegate         = self;
+    _gameMenuToggleView.currentItemIndex = 0;
+    _gameMenuToggleView.hidden           = YES;
     [self.view layoutIfNeeded];
-    [self updatePlayersUI];
-    [self updateTurnUI];
-    [self updateTurnTimeUIWithTime:TURN_TIME];
+    [self updateUI];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [_mainScene toggleCameraToPlayer:self.currentScenePlayer];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    _gamePadViewController.parentView = nil;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -141,6 +164,13 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 }
 
 #pragma mark - Private methods
+
+- (void)updateUI {
+    [self updatePlayersUI];
+    [self updateTurnUI];
+    [self updateTurnTimeUIWithTime:TURN_TIME];
+    [self updateAttackTypeUI];
+}
 
 - (void)updatePlayersUI {
     _healthPointsPlayerALabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)_playerA.healthPoints];
@@ -158,6 +188,14 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     _turnTimeLabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)time];
 }
 
+- (void)updateAttackTypeUI {
+    BOOL condition = self.currentAttackType == MSAttackTypeSword;
+    _arrowSwordImageView.hidden = !condition;
+    _arrowBowImageView.hidden   =  condition;
+    _swordAttackCountLabel.text =  [NSString stringWithFormat:@"%ld", (unsigned long)self.currentPlayer.countAttackSword];
+    _bowAttackCountLabel.text   =  [NSString stringWithFormat:@"%ld", (unsigned long)self.currentPlayer.countAttackBow];
+}
+
 - (MSPlayer)scenePlayerWithPlayer:(Player *)player {
     return player == _playerA ? MSPlayerA : MSPlayerB;
 }
@@ -168,6 +206,7 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
         if ([_mainScene movePlayer:self.currentScenePlayer withDirection:direction]) {
             [player makeMove];
             [self updatePlayersUI];
+            _neededChangeAttackType = NO;
         }
     }
 }
@@ -182,10 +221,12 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
             range = self.currentPlayer.bowRange;
             break;
     }
-    return [_mainScene drawGridCellsWithPlayer:self.currentScenePlayer andRange:range];
+    [self updateAttackTypeUI];
+    return [_mainScene checkEnemyForPlayer:self.currentScenePlayer withRange:range];
 }
 
 - (void)attackPlayerWithAttackType:(MSAttackType)attackType {
+    NSUInteger  range    = 0;
     NSUInteger  damage   = 0;
     BOOL        critical = NO;
     switch (attackType) {
@@ -193,6 +234,7 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
             if (!self.currentPlayer.canMakeAttackSword) {
                 return;
             }
+            range  = self.currentPlayer.swordRange;
             damage = [self.currentPlayer swordDamageAsCrititcal:&critical];
         }
             break;
@@ -200,11 +242,26 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
             if (!self.currentPlayer.canMakeAttackBow) {
                 return;
             }
+            range  = self.currentPlayer.bowRange;
             damage = [self.currentPlayer bowDamageAsCrititcal:&critical];
             break;
     }
+    BOOL hasEnemy = [_mainScene checkEnemyForPlayer:self.currentScenePlayer withRange:range andNeededDrawGridCells:NO];
+    if (!hasEnemy) {
+        return;
+    }
+    switch (attackType) {
+        case MSAttackTypeSword:
+            [self.currentPlayer makeAttackSword];
+            break;
+        case MSAttackTypeBow:
+            [self.currentPlayer makeAttackBow];
+            break;
+    }
+    [self updateAttackTypeUI];
     [self.waitingPlayer addDamage:damage];
     [_mainScene attackPlayer:self.waitingScenePlayer withAttackType:attackType andDamage:damage asCritical:critical];
+    _neededChangeAttackType = NO;
 }
 
 - (void)endTurn {
@@ -214,9 +271,8 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     [player resetAttacks];
     _turn = GVCTurnPlayerMakeReverse(_turn);
     _gamePadViewController.on = NO;
-    [self updatePlayersUI];
-    [self updateTurnUI];
-    [self updateTurnTimeUIWithTime:TURN_TIME];
+    _neededChangeAttackType   = NO;
+    [self updateUI];
     [_mainScene toggleCameraToPlayer:self.currentScenePlayer];
 #warning
 }
@@ -237,6 +293,10 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 - (Player *)waitingPlayer {
     return GVCTurnIsPlayerA(_turn) ? _playerB : _playerA;
+}
+
+- (MSAttackType)currentAttackType {
+    return GVCTurnIsPlayerA(_turn) ? _attackTypePlayerA : _attackTypePlayerB;
 }
 
 #pragma mark - PlayerDelegate
@@ -269,6 +329,10 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
     // Empty...
 }
 
+- (void)didReceiveCountsAttackWithPlayer:(Player *)player {
+    [self updateAttackTypeUI];
+}
+
 #pragma mark - TimerDelegate
 
 - (void)timer:(Timer *)timer didUpdateTime:(NSUInteger)time {
@@ -283,21 +347,30 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 - (void)gamePadViewController:(GamePadViewController *)viewController didPressActionButton:(GPVCActionButton)actionButton {
     switch (actionButton) {
-        case GPVCActionButtonA:
-            if (canAttackWithSword) {
-                canAttackWithSword = NO;
-                [self attackPlayerWithAttackType:MSAttackTypeSword];
-            } else {
-                canAttackWithSword = [self drawGridCellsWithAttackType:MSAttackTypeSword];
-            }
+        case GPVCActionButtonA: {
+            [self attackPlayerWithAttackType:self.currentAttackType];
+        }
             break;
-        case GPVCActionButtonB:
-            if (canAttackWithBow) {
-                canAttackWithBow = NO;
-                [self attackPlayerWithAttackType:MSAttackTypeBow];
-            } else {
-                canAttackWithSword = [self drawGridCellsWithAttackType:MSAttackTypeBow];
+        case GPVCActionButtonB: {
+            BOOL canAttack;
+            switch (self.currentAttackType) {
+                case MSAttackTypeSword:
+                    canAttack = self.currentPlayer.canMakeAttackSword;
+                    break;
+                case MSAttackTypeBow:
+                    canAttack = self.currentPlayer.canMakeAttackBow;
+                    break;
             }
+            if (_neededChangeAttackType || !canAttack) {
+                if (GVCTurnIsPlayerA(_turn)) {
+                    _attackTypePlayerA = _attackTypePlayerA == MSAttackTypeSword ? MSAttackTypeBow : MSAttackTypeSword;
+                } else {
+                    _attackTypePlayerB = _attackTypePlayerB == MSAttackTypeSword ? MSAttackTypeBow : MSAttackTypeSword;
+                }
+            }
+            _neededChangeAttackType = YES;
+            [self drawGridCellsWithAttackType:self.currentAttackType];
+        }
             break;
         case GPVCActionButtonC:
             [self endTurn];
@@ -326,7 +399,9 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 }
 
 - (void)didPressMenuWithGamePadViewController:(GamePadViewController *)viewController {
-#warning
+    [GamePadViewController shared].delegate = _gameMenuToggleView;
+    _gameMenuToggleView.hidden = NO;
+    [_timer pause];
 }
 
 - (void)didPressInfoWithGamePadViewController:(GamePadViewController *)viewController {
@@ -345,12 +420,37 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
         case MSItemMovePoints:
             [self.currentPlayer addMovePoints:value];
             break;
+        case MSItemCountAttackSword:
+            [self.currentPlayer addCountAttackSword:value];
+            break;
+        case MSItemCountAttackBow:
+            [self.currentPlayer addCountAttackBow:value];
+            break;
     }
 }
 
 - (void)didToggleCameraCompleteWithMainScene:(MainScene *)scene {
     _gamePadViewController.on = YES;
     [_timer startCountdownFromTime:TURN_TIME];
+}
+
+#pragma mark -ToggleViewDelegate
+
+- (void)toggleView:(ToggleView *)view didSelectItemLabelWithIndex:(NSUInteger)index {
+    switch (index) {
+        case 0: {
+            [GamePadViewController shared].delegate = self;
+            _gameMenuToggleView.hidden = YES;
+            [_timer start];
+        }
+            break;
+        case 1: {
+#warning
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 @end

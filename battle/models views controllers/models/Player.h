@@ -52,6 +52,8 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 
 - (void)didEndTurnWithPlayer:(Player *)player;
 
+- (void)didReceiveCountsAttackWithPlayer:(Player *)player;
+
 @end
 
 
@@ -59,25 +61,25 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 
 @property (weak, nonatomic) id<PlayerDelegate> delegate;
 
-@property (assign, nonatomic) BOOL canMakeMove;
-@property (assign, nonatomic) BOOL canMakeAttackSword;
-@property (assign, nonatomic) BOOL canMakeAttackBow;
+@property (assign, nonatomic, readonly) BOOL canMakeMove;
+@property (assign, nonatomic, readonly) BOOL canMakeAttackSword;
+@property (assign, nonatomic, readonly) BOOL canMakeAttackBow;
 
 @property (assign, nonatomic, readonly) Parameters parameters;
 
 @property (strong, nonatomic, readonly) Card *card;
 
 @property (assign, nonatomic, readonly) NSInteger healthPoints;
-
 @property (assign, nonatomic, readonly) NSInteger movePoints;
 
 @property (assign, nonatomic, readonly) NSUInteger maxHealthPoints;
-
 @property (assign, nonatomic, readonly) NSUInteger maxMovePoints;
 
 @property (assign, nonatomic, readonly) NSUInteger swordRange;
-
 @property (assign, nonatomic, readonly) NSUInteger bowRange;
+
+@property (assign, nonatomic, readonly) NSUInteger countAttackSword;
+@property (assign, nonatomic, readonly) NSUInteger countAttackBow;
 
 @property (strong, nonatomic, readonly) NSDictionary *dictionary;
 
@@ -94,15 +96,19 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 - (void)reset;
 
 - (NSUInteger)swordDamageAsCrititcal:(BOOL *)critical;
-
 - (NSUInteger)bowDamageAsCrititcal:(BOOL *)critical;
 
 - (void)addDamage:(NSUInteger)damage;
-
 - (void)addHealthPoints:(NSUInteger)healthPoints;
 
 - (BOOL)makeMove;
 
 - (void)addMovePoints:(NSUInteger)movePoints;
+
+- (void)makeAttackSword;
+- (void)makeAttackBow;
+
+- (void)addCountAttackSword:(NSUInteger)count;
+- (void)addCountAttackBow:(NSUInteger)count;
 
 @end

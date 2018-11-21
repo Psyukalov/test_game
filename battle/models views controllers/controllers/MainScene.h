@@ -37,7 +37,9 @@ typedef NS_ENUM(NSUInteger, MSAttackType) {
 typedef NS_ENUM(NSUInteger, MSItem) {
     MSItemNone = 0,
     MSItemHealthPoints,
-    MSItemMovePoints
+    MSItemMovePoints,
+    MSItemCountAttackSword,
+    MSItemCountAttackBow,
 };
 
 
@@ -72,7 +74,8 @@ typedef NS_ENUM(NSUInteger, MSItem) {
 
 - (void)synchronizePlayer:(MSPlayer)player withDirection:(MSDirection)direction;
 
-- (BOOL)drawGridCellsWithPlayer:(MSPlayer)player andRange:(NSUInteger)range;
+- (BOOL)checkEnemyForPlayer:(MSPlayer)player withRange:(NSUInteger)range;
+- (BOOL)checkEnemyForPlayer:(MSPlayer)player withRange:(NSUInteger)range andNeededDrawGridCells:(BOOL)neededDraw;
 
 - (void)attackPlayer:(MSPlayer)attackedPlayer withAttackType:(MSAttackType)attackType andDamage:(NSUInteger)damage asCritical:(BOOL)critical;
 

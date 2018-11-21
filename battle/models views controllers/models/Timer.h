@@ -36,4 +36,6 @@
 
 - (void)stop;
 
+- (void)pause;
+
 @end

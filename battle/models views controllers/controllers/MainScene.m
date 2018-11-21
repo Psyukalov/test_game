@@ -146,7 +146,11 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     [node runAction:[SKAction moveTo:nextPoint duration:MOVE_DURATION]];
 }
 
-- (BOOL)drawGridCellsWithPlayer:(MSPlayer)player andRange:(NSUInteger)range {
+- (BOOL)checkEnemyForPlayer:(MSPlayer)player withRange:(NSUInteger)range {
+    return [self checkEnemyForPlayer:player withRange:range andNeededDrawGridCells:YES];
+}
+
+- (BOOL)checkEnemyForPlayer:(MSPlayer)player withRange:(NSUInteger)range andNeededDrawGridCells:(BOOL)neededDraw {
     BOOL hasPlayer = NO;
     SKSpriteNode *playerSpriteNode = [self playerSpriteNodeWithPlayer:player];
     NSArray      *vectors          = @[[NSValue valueWithCGVector:CGVectorMake(0.f, 1.f)],
@@ -182,9 +186,11 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
             if (noMoveZone && !hasPlayer) {
                 break;
             }
-            SKSpriteNode *gridCellSpriteNode = [[SKSpriteNode alloc] initWithImageNamed:spriteName];
-            gridCellSpriteNode.position      = point;
-            [self addGridCellSpriteNode:gridCellSpriteNode];
+            if (neededDraw) {
+                SKSpriteNode *gridCellSpriteNode = [[SKSpriteNode alloc] initWithImageNamed:spriteName];
+                gridCellSpriteNode.position      = point;
+                [self addGridCellSpriteNode:gridCellSpriteNode];
+            }
             point = [self nextPointWithPoint:point vector:vector];
         }
     }
