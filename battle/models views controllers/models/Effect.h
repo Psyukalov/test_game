@@ -17,7 +17,7 @@ typedef NS_ENUM(NSUInteger, EffectType) {
     EffectTypeL,
     EffectTypeHealthPoints,
     EffectTypeMovePoints,
-    EffectTypeCriticalDamage,
+    EffectTypeCriticalChance,
     EffectTypeSwordRange,
     EffectTypeBowRange,
     EffectTypeSwordDamage,

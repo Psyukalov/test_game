@@ -21,3 +21,7 @@
 "gvc_l_game_end" = "Game End!\n\nWinner is";
 "gvc_l_play_again" = "Play again";
 "gvc_l_exit_b" = "Exit";
+
+// MainScene
+
+"ms_l_critical" = "Crit.";

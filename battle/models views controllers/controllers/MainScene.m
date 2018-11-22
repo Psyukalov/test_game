@@ -9,16 +9,25 @@
 
 #import "MainScene.h"
 
+#import "Macros.h"
+#import "Colors.h"
+
 #define FREE_X             (1)
 #define FREE_Y             (2)
 #define MIN_ZOOM_LEVEL     (1)
 #define MAX_ZOOM_LEVEL     (3)
 #define DEFAULT_ZOOM_LEVEL (1)
+#define RANDOM_VALUE       (2)
+#define HEALTH_RATIO       (5)
 
-#define GRID_SIZE       (32.0f)
-#define MOVE_DURATION   (0.32f)
-#define CAMERA_DURATION (1.28f)
-#define ZOOM_DURATION   (0.64f)
+#define GRID_SIZE             (32.0f)
+#define MOVE_DURATION         (0.32f)
+#define CAMERA_DURATION       (1.28f)
+#define FLOAT_LABEL_DURATION  (1.28f)
+#define ZOOM_DURATION         (0.64f)
+#define FONT_SIZE             (12.0f)
+#define BOW_ATTACK_SPEED      (0.02f)
+#define SWORD_ATTACK_DURATION (0.32f)
 
 #define NO_MOVE_ZONE_USER_DATA_KEY   (@"no_move_zone_user_data_key")
 #define PLAYER_USER_DATA_KEY         (@"player_user_data_key")
@@ -34,6 +43,8 @@
 #define GRID_CELL_PLAYER_SPRITE_NAME (@"grid_cell_player_sprite")
 #define SWORD_ATTACK_SPRITE_NAME     (@"sword_attack_sprite")
 #define BOW_ATTACK_SPRITE_NAME       (@"bow_attack_sprite")
+
+#define FLOAT_FONT_NAME (@"PressStart2P-Regular")
 
 
 typedef NS_ENUM(NSUInteger, MSCellStatus) {
@@ -123,12 +134,20 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     BOOL          canMove   = MSCellStatusCanMove([self cellStatusWithPoint:nextPoint]) && !node.hasActions;
     if (canMove) {
         SKSpriteNode *spriteNode;
-        NSUInteger    value = 0;
-        MSItem        item  = [self itemWithPoint:nextPoint withSpriteNode:&spriteNode andValue:&value];
+        __block NSInteger value = 0;
+        MSItem            item  = [self itemWithPoint:nextPoint withSpriteNode:&spriteNode andValue:&value];
         [node runAction:[SKAction moveTo:nextPoint duration:MOVE_DURATION] completion:^{
             if (item != MSItemNone) {
                 [spriteNode removeFromParent];
 #warning
+                /* Randomizing item value */
+                if (value == 0) {
+                    value = (1 + (NSInteger)arc4random_uniform(RANDOM_VALUE)) * (arc4random_uniform(2) == 0 ? -1 : 1);
+                    if (item == MSItemHealthPoints) {
+                        value *= HEALTH_RATIO;
+                    }
+                }
+                [self addValue:value forPlayer:player withItem:item];
                 if ([(id)self.delegate respondsToSelector:@selector(mainScene:didPickUpItem:withValue:)]) {
                     [(id)self.delegate mainScene:self didPickUpItem:item withValue:value];
                 }
@@ -197,11 +216,69 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     return hasPlayer;
 }
 
-- (void)attackPlayer:(MSPlayer)attackedPlayer withAttackType:(MSAttackType)attackType andDamage:(NSUInteger)damage asCritical:(BOOL)critical {
+- (void)attackPlayer:(MSPlayer)attackedPlayer withAttackType:(MSAttackType)attackType andDamage:(NSUInteger)damage asCritical:(BOOL)critical completion:(void (^)(void))completion {
     [self removeGridCellSpriteNodes];
     SKSpriteNode *attackedPlayerSpriteNode = [self playerSpriteNodeWithPlayer:attackedPlayer];
     SKSpriteNode *playerSpriteNode         = [self playerSpriteNodeWithPlayer:MSPlayerOtherPlayer(attackedPlayer)];
-#warning
+    NSString     *spriteName;
+    switch (attackType) {
+        case MSAttackTypeSword:
+            spriteName = SWORD_ATTACK_SPRITE_NAME;
+            break;
+        case MSAttackTypeBow:
+            spriteName = BOW_ATTACK_SPRITE_NAME;
+            break;
+    }
+    SKSpriteNode *spriteNode = [[SKSpriteNode alloc] initWithImageNamed:spriteName];
+    spriteNode.position      = playerSpriteNode.position;
+    [self addChild:spriteNode];
+    CGPoint  pointA      = playerSpriteNode.position;
+    CGPoint  pointB      = attackedPlayerSpriteNode.position;
+    CGPoint  pointSwordA = CGPointZero;
+    CGPoint  pointSwordB = CGPointZero;
+    CGFloat  angle       = 0.0f;
+    CGFloat  range       = 0.0f;
+    if (pointA.x < pointB.x) {
+        pointSwordA = CGPointMake(pointB.x - 0.5f * GRID_SIZE, pointB.y + 0.5f * GRID_SIZE);
+        pointSwordB = [self nextPointWithPoint:pointSwordA vector:[self vectorWithDirection:MSDirectionDown]];
+        angle       = -90.f;
+        range       = pointA.x - pointB.x;
+    } else if (pointA.x > pointB.x) {
+        pointSwordA = CGPointMake(pointB.x + 0.5f * GRID_SIZE, pointB.y + 0.5f * GRID_SIZE);
+        pointSwordB = [self nextPointWithPoint:pointSwordA vector:[self vectorWithDirection:MSDirectionDown]];
+        angle       = 90.0f;
+        range       = pointA.x - pointB.x;
+    } else if (pointA.y < pointB.y) {
+        pointSwordA = CGPointMake(pointB.x + 0.5f * GRID_SIZE, pointB.y - 0.5f * GRID_SIZE);
+        pointSwordB = [self nextPointWithPoint:pointSwordA vector:[self vectorWithDirection:MSDirectionLeft]];
+        angle       = 0.0f;
+        range       = pointA.y - pointB.y;
+    } else if (pointA.y > pointB.y) {
+        pointSwordA = CGPointMake(pointB.x + 0.5f * GRID_SIZE, pointB.y + 0.5f * GRID_SIZE);
+        pointSwordB = [self nextPointWithPoint:pointSwordA vector:[self vectorWithDirection:MSDirectionLeft]];
+        angle       = 180.0f;
+        range       = pointA.y - pointB.y;
+    }
+    SKAction *action;
+    switch (attackType) {
+        case MSAttackTypeSword: {
+            spriteNode.position = pointSwordA;
+            action = [SKAction moveTo:pointSwordB duration:SWORD_ATTACK_DURATION];
+        }
+            break;
+        case MSAttackTypeBow: {
+            action = [SKAction moveTo:attackedPlayerSpriteNode.position duration:BOW_ATTACK_SPEED * ABS(range) / GRID_SIZE];
+        }
+            break;
+    }
+    [spriteNode runAction:[SKAction rotateByAngle:GLKMathDegreesToRadians(angle) duration:0.0f]];
+    [spriteNode runAction:action completion:^{
+        [spriteNode removeFromParent];
+        [self addValue:-damage forPlayer:attackedPlayer withItem:MSItemHealthPoints andCritical:critical];
+        if (completion) {
+            completion();
+        }
+    }];
 }
 
 - (void)deathWithPlayer:(MSPlayer)player {
@@ -273,7 +350,7 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
     return MSCellStatusEmpty;
 }
 
-- (MSItem)itemWithPoint:(CGPoint)point withSpriteNode:(SKSpriteNode **)spriteNode andValue:(NSUInteger *)value {
+- (MSItem)itemWithPoint:(CGPoint)point withSpriteNode:(SKSpriteNode **)spriteNode andValue:(NSInteger *)value {
     for (SKNode *node in [self nodesAtPoint:point]) {
         MSItem item = [node.userData[ITEM_USER_DATA_KEY] integerValue];
         if (item != MSItemNone) {
@@ -283,6 +360,43 @@ CG_INLINE BOOL MSCellStatusCanMove(MSCellStatus cellStatus) {
         }
     }
     return MSItemNone;
+}
+
+- (void)addValue:(NSInteger)value forPlayer:(MSPlayer)player withItem:(MSItem)item {
+    [self addValue:value forPlayer:player withItem:item andCritical:NO];
+}
+
+- (void)addValue:(NSInteger)value forPlayer:(MSPlayer)player withItem:(MSItem)item andCritical:(BOOL)critical {
+    SKSpriteNode *spriteNode = [self playerSpriteNodeWithPlayer:player];
+    CGPoint       point      = [self nextPointWithPoint:spriteNode.position vector:CGVectorMake(0.0f, 1.0f)];
+    UIColor      *color;
+    switch (item) {
+        case MSItemNone:
+            return;
+        case MSItemHealthPoints:
+            color = value > 0 ? RGB(88, 216, 84) : RGB(168, 0, 32);
+            break;
+        case MSItemMovePoints:
+            color = RGB(188, 188, 188);
+            break;
+        case MSItemCountAttackSword:
+            color = RGB(148, 0, 132);
+            break;
+        case MSItemCountAttackBow:
+            color = RGB(172, 124, 0);
+            break;
+    }
+    SKLabelNode *labelNode = [SKLabelNode new];
+    labelNode.text         = [NSString stringWithFormat:@"%@%@%ld", critical ? LOCALIZE(@"ms_l_critical") : @"", value > 0 ? @"+" : @"", (long)value];
+    labelNode.fontName     = FLOAT_FONT_NAME;
+    labelNode.fontSize     = FONT_SIZE;
+    labelNode.fontColor    = color;
+    labelNode.position     = spriteNode.position;
+    labelNode.zPosition    = 8;
+    [self addChild:labelNode];
+    [labelNode runAction:[SKAction moveTo:point duration:FLOAT_LABEL_DURATION] completion:^{
+        [labelNode removeFromParent];
+    }];
 }
 
 - (CGVector)vectorWithDirection:(MSDirection)direction {

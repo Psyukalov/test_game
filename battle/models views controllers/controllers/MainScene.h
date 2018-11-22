@@ -50,7 +50,7 @@ typedef NS_ENUM(NSUInteger, MSItem) {
 
 @optional
 
-- (void)mainScene:(MainScene *)scene didPickUpItem:(MSItem)item withValue:(NSUInteger)value;
+- (void)mainScene:(MainScene *)scene didPickUpItem:(MSItem)item withValue:(NSInteger)value;
 
 - (void)didToggleCameraCompleteWithMainScene:(MainScene *)scene;
 
@@ -77,7 +77,7 @@ typedef NS_ENUM(NSUInteger, MSItem) {
 - (BOOL)checkEnemyForPlayer:(MSPlayer)player withRange:(NSUInteger)range;
 - (BOOL)checkEnemyForPlayer:(MSPlayer)player withRange:(NSUInteger)range andNeededDrawGridCells:(BOOL)neededDraw;
 
-- (void)attackPlayer:(MSPlayer)attackedPlayer withAttackType:(MSAttackType)attackType andDamage:(NSUInteger)damage asCritical:(BOOL)critical;
+- (void)attackPlayer:(MSPlayer)attackedPlayer withAttackType:(MSAttackType)attackType andDamage:(NSUInteger)damage asCritical:(BOOL)critical completion:(void (^)(void))completion;
 
 - (void)deathWithPlayer:(MSPlayer)player;
 - (void)deathWithPlayer:(MSPlayer)player completion:(void (^)(void))completion;

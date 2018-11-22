@@ -99,16 +99,16 @@ CG_INLINE Parameters ParametersMake(NSUInteger S, NSUInteger E, NSUInteger A, NS
 - (NSUInteger)bowDamageAsCrititcal:(BOOL *)critical;
 
 - (void)addDamage:(NSUInteger)damage;
-- (void)addHealthPoints:(NSUInteger)healthPoints;
+- (void)addHealthPoints:(NSInteger)healthPoints;
 
 - (BOOL)makeMove;
 
-- (void)addMovePoints:(NSUInteger)movePoints;
+- (void)addMovePoints:(NSInteger)movePoints;
 
 - (void)makeAttackSword;
 - (void)makeAttackBow;
 
-- (void)addCountAttackSword:(NSUInteger)count;
-- (void)addCountAttackBow:(NSUInteger)count;
+- (void)addCountAttackSword:(NSInteger)count;
+- (void)addCountAttackBow:(NSInteger)count;
 
 @end

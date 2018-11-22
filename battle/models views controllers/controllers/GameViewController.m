@@ -128,12 +128,13 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    Parameters parameters = ParametersMake(5, 5, 5, 5);
+    //    Parameters parameters = ParametersMake(<#NSUInteger S#>, <#NSUInteger E#>, <#NSUInteger A#>, <#NSUInteger L#>)
     if (!_playerA) {
-        _playerA = [[Player alloc] initWithParametrs:parameters andCard:nil];
+        _playerA = [[Player alloc] initWithParametrs:ParametersMake(10, 8, 1, 1) andCard:nil];
     }
     if (!_playerB) {
-        _playerB = [[Player alloc] initWithParametrs:parameters andCard:nil];
+        _playerB = [[Player alloc] initWithParametrs:ParametersMake(1, 1, 8, 10) andCard:[[Card alloc] initWithIdentifier:@"01" andEffects:@[[[Effect alloc] initWithType:EffectTypeL andValue:5]/*,
+                                                                                                                                                                                                  [[Effect alloc] initWithType:EffectTypeHealthPoints andValue:-60]*/]]];
     }
     _turn               = (GVCTurnPlayer)arc4random_uniform(2);
     _attackTypePlayerA  = MSAttackTypeSword;
@@ -197,9 +198,9 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 }
 
 - (void)updatePlayersUI {
-    _healthPointsPlayerALabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)_playerA.healthPoints];
-    _healthPointsPlayerBLabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)_playerB.healthPoints];
-    _movePointsLabel.text          = [NSString stringWithFormat:@"%ld", (unsigned long)self.currentPlayer.movePoints];
+    _healthPointsPlayerALabel.text = [NSString stringWithFormat:@"%03ld", (unsigned long)_playerA.healthPoints];
+    _healthPointsPlayerBLabel.text = [NSString stringWithFormat:@"%03ld", (unsigned long)_playerB.healthPoints];
+    _movePointsLabel.text          = [NSString stringWithFormat:@"%02ld", (unsigned long)self.currentPlayer.movePoints];
 }
 
 - (void)updateTurnUI {
@@ -211,15 +212,15 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 }
 
 - (void)updateTurnTimeUIWithTime:(NSUInteger)time {
-    _turnTimeLabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)time];
+    _turnTimeLabel.text = [NSString stringWithFormat:@"%02ld", (unsigned long)time];
 }
 
 - (void)updateAttackTypeUI {
     BOOL condition = self.currentAttackType == MSAttackTypeSword;
     _arrowSwordImageView.hidden = !condition;
     _arrowBowImageView.hidden   =  condition;
-    _swordAttackCountLabel.text =  [NSString stringWithFormat:@"%ld", (unsigned long)self.currentPlayer.countAttackSword];
-    _bowAttackCountLabel.text   =  [NSString stringWithFormat:@"%ld", (unsigned long)self.currentPlayer.countAttackBow];
+    _swordAttackCountLabel.text =  [NSString stringWithFormat:@"%02ld", (unsigned long)self.currentPlayer.countAttackSword];
+    _bowAttackCountLabel.text   =  [NSString stringWithFormat:@"%02ld", (unsigned long)self.currentPlayer.countAttackBow];
 }
 
 - (MSPlayer)scenePlayerWithPlayer:(Player *)player {
@@ -284,9 +285,10 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
             [self.currentPlayer makeAttackBow];
             break;
     }
-    [self updateAttackTypeUI];
-    [self.waitingPlayer addDamage:damage];
-    [_mainScene attackPlayer:self.waitingScenePlayer withAttackType:attackType andDamage:damage asCritical:critical];
+    [_mainScene attackPlayer:self.waitingScenePlayer withAttackType:attackType andDamage:damage asCritical:critical completion:^{
+        [self updateAttackTypeUI];
+        [self.waitingPlayer addDamage:damage];
+    }];
     _neededChangeAttackType = NO;
 }
 
@@ -364,7 +366,7 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 }
 
 - (void)didEndTurnWithPlayer:(Player *)player {
-    // Empty...
+    [self endTurn];
 }
 
 - (void)didReceiveCountsAttackWithPlayer:(Player *)player {
@@ -448,7 +450,7 @@ CG_INLINE GVCTurnPlayer GVCTurnPlayerMakeReverse (GVCTurnPlayer turnPlayer) {
 
 #pragma mark - MainSceneDelegate
 
-- (void)mainScene:(MainScene *)scene didPickUpItem:(MSItem)item withValue:(NSUInteger)value {
+- (void)mainScene:(MainScene *)scene didPickUpItem:(MSItem)item withValue:(NSInteger)value {
     switch (item) {
         case MSItemNone:
             break;
